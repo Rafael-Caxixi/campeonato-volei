@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/jogadores")
 public class JogadorController {
@@ -18,10 +20,19 @@ public class JogadorController {
     @Autowired
     TimeRepository timeRepository;
 
+    @GetMapping
+    public ResponseEntity<List<Jogador>> listar(){
+        List lista = jogadorRepository.findAll();
+        if(lista.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(lista);
+    }
+
     @PostMapping
     @Transactional
     public ResponseEntity<String> cadastrar(@RequestBody Jogador jogador){
-        int idTime = jogador.getTime_id();
+        Integer idTime = jogador.getTimeId();
 
         if(timeRepository.existsById(idTime)){
             jogadorRepository.save(jogador);
@@ -29,6 +40,26 @@ public class JogadorController {
         }
 
         return ResponseEntity.badRequest().body("Erro de parametro");
+    }
+
+    @PutMapping
+    @Transactional
+    public ResponseEntity<String> atualizar(@RequestBody Jogador jogador){
+     jogadorRepository.save(jogador);
+     return ResponseEntity.ok("Jogador atualizado");
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity<String> deletar(@PathVariable Long id){
+        Jogador jogador = jogadorRepository.getReferenceById(id);
+
+        if(jogadorRepository.existsById(id)){
+            jogadorRepository.delete(jogador);
+            return ResponseEntity.ok("Jogador deletado");
+        }
+        return ResponseEntity.badRequest().body("Jogador não existe");
+
     }
 
 }

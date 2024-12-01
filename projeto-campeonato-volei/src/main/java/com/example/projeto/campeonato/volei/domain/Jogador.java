@@ -14,7 +14,7 @@ public class Jogador {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     private String nome;
 
@@ -24,14 +24,17 @@ public class Jogador {
 
     private Integer altura;
 
-    private Integer time_id;
+    private Integer timeId;
 
-    public Jogador(String nome, Integer idade, String posicao, Integer altura, Integer time_id) {
+    private Double valorCompra;
+
+    public Jogador(String nome, Integer idade, String posicao, Integer altura, Integer timeId, Double valorCompra) {
         this.nome = nome;
         this.idade = idade;
         this.posicao = posicao;
         this.altura = altura;
-        this.time_id = time_id;
+        this.timeId = timeId;
+        this.valorCompra = valorCompra;
     }
 
 

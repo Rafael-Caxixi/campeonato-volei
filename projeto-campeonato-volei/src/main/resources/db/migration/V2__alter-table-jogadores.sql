@@ -1,0 +1,1 @@
+ALTER TABLE jogadores ADD COLUMN valor_compra DOUBLE;
