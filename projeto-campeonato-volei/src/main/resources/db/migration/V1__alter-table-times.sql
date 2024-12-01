@@ -1,0 +1,1 @@
+ALTER TABLE times ADD COLUMN orcamento DOUBLE;

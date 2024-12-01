@@ -16,7 +16,7 @@ public class Time {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     private String nome;
 
@@ -26,10 +26,13 @@ public class Time {
 
     private String cidade;
 
-    public Time(String nome, Date data_criacao, String nome_tecnico, String cidade) {
+    private Double orcamento;
+
+    public Time(String nome, Date data_criacao, String nome_tecnico, String cidade, Double orcamento) {
         this.nome = nome;
         this.data_criacao = data_criacao;
         this.nome_tecnico = nome_tecnico;
         this.cidade = cidade;
+        this.orcamento = orcamento;
     }
 }
