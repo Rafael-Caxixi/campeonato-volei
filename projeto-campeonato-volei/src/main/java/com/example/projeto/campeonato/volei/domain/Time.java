@@ -3,7 +3,10 @@ package com.example.projeto.campeonato.volei.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "times")
 @Entity(name = "Time")
@@ -20,18 +23,22 @@ public class Time {
 
     private String nome;
 
-    private Date data_criacao;
+    private LocalDateTime dataCriacao;
 
-    private String nome_tecnico;
+    private String nomeTecnico;
 
     private String cidade;
 
     private Double orcamento;
 
-    public Time(String nome, Date data_criacao, String nome_tecnico, String cidade, Double orcamento) {
+    @OneToMany(mappedBy = "time", fetch = FetchType.LAZY)
+    private List<Contratacao> contratacoes = new ArrayList<>();
+
+
+    public Time(String nome, String nomeTecnico, String cidade, Double orcamento) {
         this.nome = nome;
-        this.data_criacao = data_criacao;
-        this.nome_tecnico = nome_tecnico;
+        this.dataCriacao = LocalDateTime.now();
+        this.nomeTecnico = nomeTecnico;
         this.cidade = cidade;
         this.orcamento = orcamento;
     }

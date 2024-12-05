@@ -1,9 +1,12 @@
 package com.example.projeto.campeonato.volei.controller;
 
-import com.example.projeto.campeonato.volei.domain.Jogador;
+import com.example.projeto.campeonato.volei.dto.AtualizacaoJogadorDto;
+import com.example.projeto.campeonato.volei.dto.CadastroJogadorDto;
 import com.example.projeto.campeonato.volei.repository.JogadorRepository;
 import com.example.projeto.campeonato.volei.repository.TimeRepository;
+import com.example.projeto.campeonato.volei.service.JogadorService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,47 +21,53 @@ public class JogadorController {
     JogadorRepository jogadorRepository;
 
     @Autowired
+    JogadorService service;
+
+    @Autowired
     TimeRepository timeRepository;
 
     @GetMapping
-    public ResponseEntity<List<Jogador>> listar(){
-        List lista = jogadorRepository.findAll();
-        if(lista.isEmpty()){
-            return ResponseEntity.noContent().build();
+    public List<CadastroJogadorDto> listar(){
+        try{
+        return service.listar();
+        } catch (Exception e) {
+            throw new RuntimeException("Ocorreu algum erro: " + e);
         }
-        return ResponseEntity.ok(lista);
     }
 
     @PostMapping
     @Transactional
-    public ResponseEntity<String> cadastrar(@RequestBody Jogador jogador){
-        Integer idTime = jogador.getTimeId();
+    public ResponseEntity<String> cadastrar(@RequestBody @Valid CadastroJogadorDto jogador){
 
-        if(timeRepository.existsById(idTime)){
-            jogadorRepository.save(jogador);
+        try{
+            service.cadastrar(jogador);
             return ResponseEntity.ok("Cadastro efetuado com sucesso");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-
-        return ResponseEntity.badRequest().body("Erro de parametro");
     }
 
     @PutMapping
     @Transactional
-    public ResponseEntity<String> atualizar(@RequestBody Jogador jogador){
-     jogadorRepository.save(jogador);
-     return ResponseEntity.ok("Jogador atualizado");
+    public ResponseEntity<String> atualizar(@RequestBody AtualizacaoJogadorDto dto){
+        try{
+        service.atualizar(dto);
+            return ResponseEntity.ok("Atualização feita com sucesso");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<String> deletar(@PathVariable Long id){
-        Jogador jogador = jogadorRepository.getReferenceById(id);
-
-        if(jogadorRepository.existsById(id)){
-            jogadorRepository.delete(jogador);
+    public ResponseEntity<String> deletar(@PathVariable Integer id){
+        try{
+            service.deletar(id);
             return ResponseEntity.ok("Jogador deletado");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Jogador não existe");
         }
-        return ResponseEntity.badRequest().body("Jogador não existe");
 
     }
 
