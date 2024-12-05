@@ -1,5 +1,7 @@
 package com.example.projeto.campeonato.volei.domain;
 
+import com.example.projeto.campeonato.volei.dto.AtualizacaoJogadorDto;
+import com.example.projeto.campeonato.volei.dto.CadastroJogadorDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,17 +26,26 @@ public class Jogador {
 
     private Integer altura;
 
-    private Integer timeId;
-
     private Double valorCompra;
 
-    public Jogador(String nome, Integer idade, String posicao, Integer altura, Integer timeId, Double valorCompra) {
-        this.nome = nome;
-        this.idade = idade;
-        this.posicao = posicao;
-        this.altura = altura;
-        this.timeId = timeId;
-        this.valorCompra = valorCompra;
+    @OneToOne(mappedBy = "jogador", fetch = FetchType.LAZY)
+    private Contratacao contratacao;
+
+
+    public Jogador(CadastroJogadorDto dto) {
+        this.nome = dto.nome();
+        this.idade = dto.idade();
+        this.posicao = dto.posicao();
+        this.altura = dto.altura();
+        this.valorCompra = dto.valorCompra();
+    }
+
+    public void AtualizarDto(AtualizacaoJogadorDto dto){
+        this.nome = dto.nome();
+        this.idade = dto.idade();
+        this.posicao = dto.posicao();
+        this.altura = dto.altura();
+        this.valorCompra = dto.valorCompra();
     }
 
 
