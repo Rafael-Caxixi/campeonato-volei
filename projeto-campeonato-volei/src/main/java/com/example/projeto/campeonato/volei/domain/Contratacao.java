@@ -23,12 +23,22 @@ public class Contratacao {
     @ManyToOne(fetch = FetchType.LAZY)
     private Time time;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Jogador jogador;
 
     public Contratacao(Time time, Jogador jogador) {
         this.dataCompra = LocalDateTime.now();
         this.time = time;
         this.jogador = jogador;
+    }
+
+    @Override
+    public String toString() {
+        return "Contratacao{" +
+                "id=" + id +
+                ", dataCompra=" + dataCompra +
+                ", time=" + time +
+                ", jogador=" + jogador +
+                '}';
     }
 }
