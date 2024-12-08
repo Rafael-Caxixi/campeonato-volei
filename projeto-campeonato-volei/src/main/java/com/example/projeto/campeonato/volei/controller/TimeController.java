@@ -1,10 +1,14 @@
 package com.example.projeto.campeonato.volei.controller;
 
 
+import com.example.projeto.campeonato.volei.domain.Jogador;
 import com.example.projeto.campeonato.volei.domain.Time;
-import com.example.projeto.campeonato.volei.dto.TimeDto;
+import com.example.projeto.campeonato.volei.dto.AtualizacaoTimeDto;
+import com.example.projeto.campeonato.volei.dto.CadastroTimeDto;
 import com.example.projeto.campeonato.volei.repository.TimeRepository;
+import com.example.projeto.campeonato.volei.service.TimeService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,26 +22,39 @@ public class TimeController {
     @Autowired
     private TimeRepository repository;
 
+    @Autowired
+    private TimeService service;
+
     @GetMapping
-    public List<TimeDto> listar(){
-        return repository.findAll()
-                .stream()
-                .map(TimeDto::new)
-                .toList();
+    public List<CadastroTimeDto> listar() {
+        try {
+            return service.listar();
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Erro no sistema: " + e);
+        }
+
     }
 
     @PostMapping
     @Transactional
-    public ResponseEntity<String> cadastrar(@RequestBody Time time){
-        repository.save(new Time(time.getNome(), time.getNomeTecnico(), time.getCidade(), time.getOrcamento()));
-        return ResponseEntity.ok("Cadastro efetuado com sucesso");
+    public ResponseEntity<String> cadastrar(@RequestBody @Valid CadastroTimeDto dto) {
+        try {
+            service.cadastrar(dto);
+            return ResponseEntity.ok("Cadastro efetuado com sucesso");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body("Erro ao cadatrar: " + e.getMessage());
+        }
     }
 
     @PutMapping
     @Transactional
-    public ResponseEntity<String> atualizar(@RequestBody Time time){
-        repository.save(time);
-        return ResponseEntity.ok("Time atualizado");
+    public ResponseEntity<String> atualizar(@RequestBody AtualizacaoTimeDto dto) {
+        try {
+            service.atualizar(dto);
+            return ResponseEntity.ok("Time atualizado");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body("Erro: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -45,15 +62,14 @@ public class TimeController {
     public ResponseEntity<String> deletar(@PathVariable Integer id) {
         if (repository.existsById(id)) {
             try {
-                Time time = repository.getReferenceById(id);
-                repository.delete(time);
-                return ResponseEntity.ok("Time deletado com sucesso.");
-            } catch (Exception e) {
-                return ResponseEntity.status(409).body("Verifique se o time existe, ou se há jogadores nesse time." +
-                        " Caso haja, exclua os jogadores primeiro");
+                service.deletar(id);
+                return ResponseEntity.ok("Jogador deletado");
+            } catch (RuntimeException e) {
+                return ResponseEntity.badRequest().body("Jogador existe mas não foi possível deleta-lo");
             }
+        } else {
+            return ResponseEntity.badRequest().body("Jogador não encontrado");
         }
-        return ResponseEntity.badRequest().body("Time não encontrado.");
     }
 
 }
