@@ -5,6 +5,8 @@ import com.example.projeto.campeonato.volei.dto.CadastroJogadorDto;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Objects;
+
 @Table(name = "jogadores")
 @Entity(name = "Jogador")
 @Getter
@@ -47,6 +49,5 @@ public class Jogador {
         this.altura = dto.altura();
         this.valorCompra = dto.valorCompra();
     }
-
 
 }

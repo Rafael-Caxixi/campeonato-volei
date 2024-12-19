@@ -3,6 +3,7 @@ package com.example.projeto.campeonato.volei.service;
 import com.example.projeto.campeonato.volei.domain.Jogador;
 import com.example.projeto.campeonato.volei.dto.AtualizacaoJogadorDto;
 import com.example.projeto.campeonato.volei.dto.CadastroJogadorDto;
+import com.example.projeto.campeonato.volei.exception.EntidadeNaoEncontradaException;
 import com.example.projeto.campeonato.volei.repository.JogadorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,13 +32,13 @@ public class JogadorService {
         jogador.AtualizarDto(dto);
     }
 
-    public void deletar(Integer id){
-        Jogador jogador = repository.getReferenceById(id);
-
-        if(repository.existsById(id)){
-            repository.delete(jogador);
+    public void deletar(Integer idJogador) {
+        if (!repository.existsById(idJogador)) {
+            throw new EntidadeNaoEncontradaException("Jogador com o ID " + idJogador + " não encontrado.");
         }
+        repository.deleteById(idJogador);
     }
+
 
 
 
