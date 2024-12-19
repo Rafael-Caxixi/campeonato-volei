@@ -66,7 +66,7 @@ public class JogadorController {
             service.deletar(id);
             return ResponseEntity.ok("Jogador deletado");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Jogador não existe");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
 
     }
